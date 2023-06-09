@@ -1,0 +1,12 @@
+{<Sorting_Type.CHATGPT_QUICK_SORT: 2>: {10: datetime.timedelta(0),
+                                        100: datetime.timedelta(0),
+                                        1000: datetime.timedelta(microseconds=1999),
+                                        10000: datetime.timedelta(microseconds=32026),
+                                        100000: datetime.timedelta(microseconds=461949),
+                                        1000000: datetime.timedelta(seconds=5, microseconds=130706)},
+ <Sorting_Type.NP_SORT: 1>: {10: datetime.timedelta(0),
+                             100: datetime.timedelta(0),
+                             1000: datetime.timedelta(microseconds=1004),
+                             10000: datetime.timedelta(microseconds=1000),
+                             100000: datetime.timedelta(microseconds=5527),
+                             1000000: datetime.timedelta(microseconds=56232)}}

@@ -17,6 +17,7 @@ class Sorting_Type(Enum):
     CHATGPT_QUICK_SORT = 2
     CHATGPT_QUICK_SORT_RANDOM_PIVOT = 3
     CHATGPT_OPTIMAL_SORT = 4
+    CHATGPT_QUICK_SORT_2 = 5
 
 def init_array_i32(N):
     arr = np.random.randint(0, 2**31-1, size=N, dtype=np.int32)
@@ -83,6 +84,18 @@ def chatgpt_optimal_sort(arr, low, high):
         chatgpt_optimal_sort(arr, low, pi - 1)
         chatgpt_optimal_sort(arr, pi + 1, high)
 
+# PROMPT: The 'chatgpt_optimal_sort()' function you wrote is still much slower than numpy's built-in sort. 
+# Try copying what numpy does for sorting to improve performance. You cannot use any built-in sorting 
+# methods provided by Python or numpy.
+def chatgpt_quicksort_2(arr):
+    if len(arr) <= 1:
+        return arr
+    pivot = arr[len(arr) // 2]
+    left = [x for x in arr if x < pivot]
+    middle = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+    return chatgpt_quicksort_2(left) + middle + chatgpt_quicksort_2(right)
+
 orders_of_magnitude = 6
 
 execution_time_dict = {
@@ -90,13 +103,14 @@ execution_time_dict = {
     Sorting_Type.CHATGPT_QUICK_SORT: {},
     Sorting_Type.CHATGPT_QUICK_SORT_RANDOM_PIVOT: {},
     Sorting_Type.CHATGPT_OPTIMAL_SORT: {},
+    Sorting_Type.CHATGPT_QUICK_SORT_2: {},
 }
 
 print(execution_time_dict)
 
 for i in range(1, orders_of_magnitude + 1):
     elms = 10**i
-    print("Sorting 10^{} <i64> elements ({})\n. . . . . . . .".format(i, f'{elms:,}'))
+    print("\nSorting 10^{} <i64> elements ({})\n. . . . . . . .".format(i, f'{elms:,}'))
 
     #np sort
     arr = init_array_i32(elms)
@@ -125,6 +139,14 @@ for i in range(1, orders_of_magnitude + 1):
     chatgpt_optimal_sort(arr, 0, len(arr) - 1)
     endTime = datetime.now()
     execution_time_dict[Sorting_Type.CHATGPT_OPTIMAL_SORT].update({elms: endTime - startTime})
+
+    #chatgpt quick sort 2
+    arr = init_array_i32(elms)
+    startTime = datetime.now()
+    chatgpt_quicksort_2(arr)
+    endTime = datetime.now()
+    execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT_2].update({elms: endTime - startTime})
+
 
     #new line formatting
     print()

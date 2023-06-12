@@ -52,14 +52,14 @@ for i in range(1, orders_of_magnitude + 1):
     startTime = datetime.now()
     np_sort(arr)
     endTime = datetime.now()
-    execution_time_dict[Sorting_Type.NP_SORT].update({elms: endTime - startTime})
+    execution_time_dict[Sorting_Type.NP_SORT].update({elms: str(endTime - startTime)})
 
     #chatgpt sort
     arr = init_array_i32(elms)
     startTime = datetime.now()
     chatgpt_quick_sort(arr, 0, len(arr) - 1)
     endTime = datetime.now()
-    execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT].update({elms: endTime - startTime})
+    execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT].update({elms: str(endTime - startTime)})
 
     #new line formatting
     print()

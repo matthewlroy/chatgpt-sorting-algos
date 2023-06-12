@@ -18,6 +18,8 @@ class Sorting_Type(Enum):
     CHATGPT_QUICK_SORT_RANDOM_PIVOT = 3
     CHATGPT_OPTIMAL_SORT = 4
     CHATGPT_QUICK_SORT_2 = 5
+    CHATGPT_TIM_SORT = 6
+    CHATGPT_RADIX_SORT = 7
 
 def init_array_i32(N):
     arr = np.random.randint(0, 2**31-1, size=N, dtype=np.int32)
@@ -96,6 +98,78 @@ def chatgpt_quicksort_2(arr):
     right = [x for x in arr if x > pivot]
     return chatgpt_quicksort_2(left) + middle + chatgpt_quicksort_2(right)
 
+###
+# PROMPT: Write a timsort algorithm for sorting 1000000 random int32 values.
+def chatgpt_timsort(arr):
+    minrun = 256
+    n = len(arr)
+    for i in range(0, n, minrun):
+        chatgpt_insertion_sort(arr, i, min((i + minrun - 1), n - 1))
+    size = minrun
+    while size < n:
+        for start in range(0, n, size):
+            midpoint = start + size - 1
+            end = min((start + size * 2 - 1), (n-1))
+            chatgpt_merge(arr, start, midpoint, end)
+        size *= 2
+    return arr
+
+def chatgpt_insertion_sort(arr, left, right):
+    for i in range(left + 1, right + 1):
+        key_item = arr[i]
+        j = i - 1
+        while j >= left and arr[j] > key_item:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key_item
+
+def chatgpt_merge(arr, start, midpoint, end):
+    first_half = arr[start:midpoint + 1]
+    second_half = arr[midpoint + 1:end + 1]
+    k = start
+    i = 0
+    j = 0
+    while i < len(first_half) and j < len(second_half):
+        if first_half[i] < second_half[j]:
+            arr[k] = first_half[i]
+            i += 1
+        else:
+            arr[k] = second_half[j]
+            j += 1
+        k += 1
+    while i < len(first_half):
+        arr[k] = first_half[i]
+        i += 1
+        k += 1
+    while j < len(second_half):
+        arr[k] = second_half[j]
+        j += 1
+        k += 1
+###
+
+# PROMPT: Give me the most optimized chatgpt sorting algorithm for sorting 1 million elements of int32 values
+def chatgpt_radix_sort(arr):
+    RADIX = 10
+    maxLength = False
+    tmp, placement = -1, 1
+
+    while not maxLength:
+        maxLength = True
+        buckets = [list() for _ in range(RADIX)]
+        for i in arr:
+            tmp = i // placement
+            buckets[tmp % RADIX].append(i)
+            if maxLength and tmp > 0:
+                maxLength = False
+        a = 0
+        for b in range(RADIX):
+            buck = buckets[b]
+            for i in buck:
+                arr[a] = i
+                a += 1
+        placement *= RADIX
+    return arr
+
 orders_of_magnitude = 6
 
 execution_time_dict = {
@@ -104,6 +178,8 @@ execution_time_dict = {
     Sorting_Type.CHATGPT_QUICK_SORT_RANDOM_PIVOT: {},
     Sorting_Type.CHATGPT_OPTIMAL_SORT: {},
     Sorting_Type.CHATGPT_QUICK_SORT_2: {},
+    Sorting_Type.CHATGPT_TIM_SORT: {},
+    Sorting_Type.CHATGPT_RADIX_SORT: {},
 }
 
 print(execution_time_dict)
@@ -147,6 +223,19 @@ for i in range(1, orders_of_magnitude + 1):
     endTime = datetime.now()
     execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT_2].update({elms: endTime - startTime})
 
+    #chatgpt tim sort
+    arr = init_array_i32(elms)
+    startTime = datetime.now()
+    chatgpt_timsort(arr)
+    endTime = datetime.now()
+    execution_time_dict[Sorting_Type.CHATGPT_TIM_SORT].update({elms: endTime - startTime})
+
+    #chatgpt tim sort
+    arr = init_array_i32(elms)
+    startTime = datetime.now()
+    chatgpt_radix_sort(arr)
+    endTime = datetime.now()
+    execution_time_dict[Sorting_Type.CHATGPT_RADIX_SORT].update({elms: endTime - startTime})
 
     #new line formatting
     print()

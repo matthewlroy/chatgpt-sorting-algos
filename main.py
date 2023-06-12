@@ -4,6 +4,7 @@ import numpy as np
 from enum import Enum
 import pprint
 import random
+import matplotlib.pyplot as plt
 
 startTime = datetime.now()
 print("\nStarted script at: {}".format(startTime))
@@ -102,34 +103,31 @@ for i in range(1, orders_of_magnitude + 1):
     startTime = datetime.now()
     np_sort(arr)
     endTime = datetime.now()
-    execution_time_dict[Sorting_Type.NP_SORT].update({elms: str(endTime - startTime)})
+    execution_time_dict[Sorting_Type.NP_SORT].update({elms: endTime - startTime})
 
     #chatgpt quick sort
     arr = init_array_i32(elms)
     startTime = datetime.now()
     chatgpt_quick_sort(arr, 0, len(arr) - 1)
     endTime = datetime.now()
-    execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT].update({elms: str(endTime - startTime)})
+    execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT].update({elms: endTime - startTime})
 
     #chatgpt sort pivot
     arr = init_array_i32(elms)
     startTime = datetime.now()
     chatgpt_quick_sort_randomized_pivot(arr, 0, len(arr) - 1)
     endTime = datetime.now()
-    execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT_RANDOM_PIVOT].update({elms: str(endTime - startTime)})
+    execution_time_dict[Sorting_Type.CHATGPT_QUICK_SORT_RANDOM_PIVOT].update({elms: endTime - startTime})
 
     #chatgpt sort optimal
     arr = init_array_i32(elms)
     startTime = datetime.now()
     chatgpt_optimal_sort(arr, 0, len(arr) - 1)
     endTime = datetime.now()
-    execution_time_dict[Sorting_Type.CHATGPT_OPTIMAL_SORT].update({elms: str(endTime - startTime)})
+    execution_time_dict[Sorting_Type.CHATGPT_OPTIMAL_SORT].update({elms: endTime - startTime})
 
     #new line formatting
     print()
-
-# Print results
-pprint.pprint(execution_time_dict)
 
 ### CODE EXEC END
 
@@ -137,3 +135,29 @@ endTime = datetime.now()
 print("\n* * * *  END  CODE EXECUTION * * * *\n")
 print("Ended script at: {}".format(endTime))
 print("Script execution time: {}\n".format(endTime - startTime))
+
+# Print results
+pprint.pprint(execution_time_dict)
+
+# Plot results
+# Convert the time deltas to seconds
+for sort_type in execution_time_dict:
+    for size in execution_time_dict[sort_type]:
+        time_delta = execution_time_dict[sort_type][size]
+        seconds = time_delta.total_seconds()
+        execution_time_dict[sort_type][size] = seconds
+
+# Create the plot
+for sort_type in execution_time_dict:
+    sizes = list(execution_time_dict[sort_type].keys())
+    times = list(execution_time_dict[sort_type].values())
+    plt.plot(sizes, times, label=str(sort_type))
+
+# Add labels and legend
+plt.xlabel('Input Size')
+plt.ylabel('Time (seconds)')
+plt.title('Sorting Algorithm Performance')
+plt.legend()
+
+# Show the plot
+plt.show()
